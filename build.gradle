@@ -23,6 +23,24 @@ task unpackWav(type: Copy) {
     dependsOn downloadWavZip
 }
 
+task downloadMetadata(type: de.undercouch.gradle.tasks.download.Download) {
+    src 'https://github.com/yoshegg/voice-andrew-us-data/archive/master.zip'
+    dest "$buildDir/metadata.zip"
+    overwrite false
+}
+
+task unpackText(type: Copy) {
+    from zipTree("$buildDir/metadata.zip"), {
+        include '**/txt/*.txt'
+        eachFile {
+            it.path = it.name
+        }
+    }
+    into "$buildDir/text"
+    includeEmptyDirs = false
+    dependsOn downloadMetadata
+}
+
 legacyInit {
-    dependsOn unpackWav
+    dependsOn unpackWav, unpackText
 }
