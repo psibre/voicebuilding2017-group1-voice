@@ -82,7 +82,13 @@ task remapLabels(type: Copy) {
         def phoneMapping = [
                 '<p:>': '_',
                 'i:'  : 'i',
-                'O:'  : 'O'
+                'O:'  : 'O',
+                '3`'  : 'r=',
+                'Q'   : 'A',
+                'R'   : 'r',
+                'u:'  : 'u',
+                'aI'  : 'AI',
+                'eI'  : 'EI'
         ]
         def fields = it.tokenize()
         if (fields.size() == 3) {
