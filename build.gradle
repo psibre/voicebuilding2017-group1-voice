@@ -54,7 +54,7 @@ task unpackTextGrids(type: Copy) {
 }
 
 task convertTextGrids {
-    def labDir = file("$buildDir/lab_maus")
+    ext.labDir = file("$buildDir/lab_maus")
     outputs.dir labDir
     doLast {
         labDir.mkdirs()
@@ -74,6 +74,24 @@ task convertTextGrids {
     }
 }
 
+task remapLabels(type: Copy) {
+    from convertTextGrids.labDir
+    into "$buildDir/lab"
+    dependsOn convertTextGrids
+    filter {
+        def phoneMapping = [
+                '<p:>': '_',
+                'i:'  : 'i',
+                'O:'  : 'O'
+        ]
+        def fields = it.tokenize()
+        if (fields.size() == 3) {
+            fields[-1] = phoneMapping[fields[-1]] ?: fields[-1]
+        }
+        fields.join(' ')
+    }
+}
+
 legacyInit {
-    dependsOn unpackWav, unpackText
+    dependsOn unpackWav, unpackText, remapLabels
 }
