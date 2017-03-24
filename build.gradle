@@ -95,3 +95,11 @@ task remapLabels(type: Copy) {
 legacyInit {
     dependsOn unpackWav, unpackText, remapLabels
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        if (details.requested.name == 'groovy-all') {
+            details.useTarget group: details.requested.group, name: details.requested.name, version: '2.4.7'
+        }
+    }
+}
