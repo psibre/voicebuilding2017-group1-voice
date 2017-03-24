@@ -1,2 +1,11 @@
+plugins {
+    id 'de.dfki.mary.voicebuilding-legacy' version '5.2.0'
+}
+
 group 'de.uni-saarland.coli.voicebuilding2017.group1'
 version '0.1-SNAPSHOT'
+
+voice {
+    name = 'voicebuilding2017-group1'
+    gender = 'male'
+}
