@@ -41,6 +41,39 @@ task unpackText(type: Copy) {
     dependsOn downloadMetadata
 }
 
+task unpackTextGrids(type: Copy) {
+    from zipTree("$buildDir/metadata.zip"), {
+        include '**/textGrid/*.TextGrid'
+        eachFile {
+            it.path = it.name
+        }
+    }
+    into "$buildDir/TextGrid"
+    includeEmptyDirs = false
+    dependsOn downloadMetadata
+}
+
+task convertTextGrids {
+    def labDir = file("$buildDir/lab_maus")
+    outputs.dir labDir
+    doLast {
+        labDir.mkdirs()
+        def scriptFile = file("$temporaryDir/script.praat")
+        scriptFile.withWriter { script ->
+            fileTree(buildDir).include('TextGrid/*.TextGrid').each { textGridFile ->
+                def labFile = file("$labDir/${textGridFile.name - 'TextGrid' + 'lab'}")
+                script.println "Read from file... $textGridFile"
+                script.println "Extract tier... 3"
+                script.println "Save as Xwaves label file... $labFile"
+                script.println "printline Wrote $labFile.name"
+            }
+        }
+        exec {
+            commandLine 'praat', '--run', scriptFile
+        }
+    }
+}
+
 legacyInit {
     dependsOn unpackWav, unpackText
 }
